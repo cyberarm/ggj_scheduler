@@ -29,8 +29,8 @@ class SchedulerGame
         fill(0xf88_444444)
         @map.draw
 
-        @font.draw_text(@map.mouse_over(window.mouse_x, window.mouse_y), window.mouse_x + 2, window.mouse_y + 2, 5, 1, 1, Gosu::Color::BLACK)
-        @font.draw_text(@map.mouse_over(window.mouse_x, window.mouse_y), window.mouse_x, window.mouse_y, 5)
+        @font.draw_text(@map.mouse_over(window.mouse_x, window.mouse_y), window.mouse_x + 12 + 2, window.mouse_y + 2, 5, 1, 1, Gosu::Color::BLACK)
+        @font.draw_text(@map.mouse_over(window.mouse_x, window.mouse_y), window.mouse_x + 12, window.mouse_y, 5)
       end
 
       def update
