@@ -19,6 +19,8 @@ class SchedulerGame
 
         @map = Map.new(file: "#{GAME_ROOT_PATH}/media/maps/1.dat")
 
+        @paths = []
+
         @key_history = Array.new(KONAMI_CODE.size, 0)
         @key_history_index = 0
 
@@ -29,18 +31,23 @@ class SchedulerGame
         fill(0xf88_444444)
         @map.draw
 
-        @font.draw_text(@map.mouse_over(window.mouse_x, window.mouse_y), window.mouse_x + 12 + 2, window.mouse_y + 2, 5, 1, 1, Gosu::Color::BLACK)
-        @font.draw_text(@map.mouse_over(window.mouse_x, window.mouse_y), window.mouse_x + 12, window.mouse_y, 5)
+        @paths.each(&:draw)
+
+        @font.draw_text(@map.mouse_over(window.mouse_x, window.mouse_y).type, window.mouse_x + 12 + 2, window.mouse_y + 2, 5, 1, 1, Gosu::Color::BLACK)
+        @font.draw_text(@map.mouse_over(window.mouse_x, window.mouse_y).type, window.mouse_x + 12, window.mouse_y, 5)
       end
 
       def update
         @map.update
+
+        add_to_path if @building_path
       end
 
       def button_down(id)
         super
 
         # TODO: Track mouse move while button down to create path to NEED #
+        construct_path if id == Gosu::MS_LEFT
 
         @key_history[@key_history_index] = id
 
@@ -55,6 +62,32 @@ class SchedulerGame
         if @key_history_index > @key_history.size - 1
           @key_history_index = 0
           @key_history = Array.new(@key_history.size, 0)
+        end
+      end
+
+      def button_up(id)
+        super
+
+        finish_path if id == Gosu::MS_LEFT
+      end
+
+      def construct_path
+        @building_path = true
+
+        @paths << Path.new(map: @map)
+      end
+
+      def add_to_path
+        node = @map.mouse_over(window.mouse_x, window.mouse_y)
+
+        @paths.last.nodes << node if node != @paths.last&.nodes&.detect { |n| n == node }
+      end
+
+      def finish_path
+        @building_path = false
+
+        unless @paths.last&.valid?
+          @paths.delete(@paths.last)
         end
       end
     end

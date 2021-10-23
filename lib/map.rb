@@ -44,7 +44,11 @@ class SchedulerGame
       @file.each_line do |line|
         x = 0
         line.strip.chars do |char|
-          @grid << parse_char(char)
+          @grid << Node.new(
+            position: CyberarmEngine::Vector.new(x, y, 0),
+            type: parse_char(char),
+            color: tile_color(parse_char(char))
+          )
 
           x += 1
         end
@@ -73,7 +77,7 @@ class SchedulerGame
               y * TILE_SIZE,
               TILE_SIZE,
               TILE_SIZE,
-              tile_color(get(x, y)),
+              get(x, y).color,
               0
             )
           end
@@ -101,6 +105,10 @@ class SchedulerGame
       y /= TILE_SIZE
 
       get(x.floor.clamp(0..@width - 1), y.floor.clamp(0..@height - 1))
+    end
+
+    def scaler
+      @scaler
     end
   end
 end
