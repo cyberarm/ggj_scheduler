@@ -115,6 +115,10 @@ class SchedulerGame
         @travellers.each do |traveller|
           traveller.draw
         end
+
+        @zones.each do |zone|
+          zone.draw
+        end
       end
     end
 
