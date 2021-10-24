@@ -27,6 +27,9 @@ class SchedulerGame
             para "Create paths from the entry door to the various zones before time runs out!"
             para "Use [LEFT MOUSE] and drag to trace a path from the entry door to the waiting zone."
             para "Be careful not to block yourself!"
+            banner ""
+            para "Music: cynicmusic [cynicmusic.com]"
+            para "Bubble SFX: farfadet46 [opengameart.org/users/farfadet46]"
           end
         end
       end
