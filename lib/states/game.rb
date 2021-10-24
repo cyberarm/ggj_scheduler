@@ -22,7 +22,7 @@ class SchedulerGame
         @key_history = Array.new(KONAMI_CODE.size, 0)
         @key_history_index = 0
 
-        @font = Gosu::Font.new(28)
+        @font = Gosu::Font.new(26)
         @clock_font = Gosu::Font.new(48)
 
         @game_time = 0.0
@@ -36,6 +36,7 @@ class SchedulerGame
         @map.paths.each(&:draw)
 
         @clock_font.draw_text(format_clock, @map.width + 32, 32, 0)
+        @font.draw_text("#{remaining_travellers} of #{@map.travellers.size} Travellers remaining", @map.width + 32, 80, 0)
       end
 
       def update
@@ -169,6 +170,10 @@ class SchedulerGame
         return right if right
 
         false
+      end
+
+      def remaining_travellers
+       @map.travellers.size - (@map.travellers.size - @map.zones.detect { |z| z.type == :entry_door }.occupancy)
       end
 
       def format_clock
