@@ -73,7 +73,7 @@ class SchedulerGame
 
         @building_path = true
 
-        @map.paths << Path.new(map: @map, color_index: @map.paths.count)
+        @map.paths << Path.new(map: @map, color_index: Path.next_color)
       end
 
       def add_to_path

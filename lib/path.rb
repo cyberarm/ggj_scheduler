@@ -9,6 +9,14 @@ class SchedulerGame
       0xff_aa8888
     ]
 
+    @@color_index = 0
+
+    def self.next_color
+      @@color_index += 1
+
+      @@color_index % (PATH_COLORS.size - 1)
+    end
+
     attr_reader :map, :valid_types, :nodes
     attr_accessor :externally_valid, :building
 
