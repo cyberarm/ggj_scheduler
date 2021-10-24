@@ -33,8 +33,8 @@ class SchedulerGame
           0,
           0.5,
           0.5,
-          1,
-          1,
+          0.3,
+          0.3,
           0xee_ffffff
         )
       when :sending
@@ -45,8 +45,8 @@ class SchedulerGame
           0,
           0.5,
           0.5,
-          1,
-          1,
+          0.3,
+          0.3,
           0xee_ffffff
         )
       end
