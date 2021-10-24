@@ -19,8 +19,6 @@ class SchedulerGame
 
         @map = Map.new(file: "#{GAME_ROOT_PATH}/media/maps/1.dat")
 
-        @paths = []
-
         @key_history = Array.new(KONAMI_CODE.size, 0)
         @key_history_index = 0
 
@@ -31,7 +29,7 @@ class SchedulerGame
         fill(0xf88_444444)
         @map.draw
 
-        @paths.each(&:draw)
+        @map.paths.each(&:draw)
 
         @font.draw_text(@map.mouse_over(window.mouse_x, window.mouse_y).type, window.mouse_x + 12 + 2, window.mouse_y + 2, 5, 1, 1, Gosu::Color::BLACK)
         @font.draw_text(@map.mouse_over(window.mouse_x, window.mouse_y).type, window.mouse_x + 12, window.mouse_y, 5)
@@ -78,34 +76,49 @@ class SchedulerGame
 
         @building_path = true
 
-        @paths << Path.new(map: @map, color_index: @paths.count)
+        @map.paths << Path.new(map: @map, color_index: @map.paths.count)
       end
 
       def add_to_path
         node = @map.mouse_over(window.mouse_x, window.mouse_y)
 
-        @paths.last.nodes << node if node != @paths.last&.nodes&.detect { |n| n == node } &&
-                                     node_is_straight?(node, @paths.last&.nodes&.last) &&
-                                     node_is_neighbor?(node, @paths.last&.nodes&.last) &&
+        @map.paths.last.nodes << node if node != @map.paths.last&.nodes&.detect { |n| n == node } &&
+                                     node_is_straight?(node, @map.paths.last&.nodes&.last) &&
+                                     node_is_neighbor?(node, @map.paths.last&.nodes&.last) &&
                                      node.type == :floor
 
-        @paths.last.externally_valid = path_valid?(@paths.last)
+        @map.paths.last.externally_valid = path_valid?(@map.paths.last)
       end
 
       def finish_path
         @building_path = false
 
-        unless @paths.last&.valid? && node_neighbor_is_zone?(@paths.last&.nodes.last)
-          @paths.delete(@paths.last)
+        unless @map.paths.last&.valid? &&
+               node_neighbor_is_zone?(@map.paths.last&.nodes&.last) &&
+               node_neighbor_is_zone?(@map.paths.last&.nodes&.first) != node_neighbor_is_zone?(@map.paths.last&.nodes&.last)
+
+          @map.paths.delete(@map.paths.last)
+        else
+          assign_path(@map.paths.last)
         end
       end
 
       def path_valid?(path_a)
-        @paths.reject { |o| o == path_a }.each do |path_b|
+        @map.paths.reject { |o| o == path_a }.each do |path_b|
           return false if path_a.nodes.any? { |n| path_b.nodes.include?(n) }
         end
 
         true
+      end
+
+      def assign_path(path)
+        zone = node_neighbor_is_zone?(path.nodes.first)
+        goal = node_neighbor_is_zone?(path.nodes.last)
+
+        traveller = @map.travellers.find { |t| t.path.nil? && t.zone == zone && t.goal == goal }
+
+        traveller.path = path if traveller
+        @map.paths.delete(path) unless traveller
       end
 
       def node_is_straight?(a, b)
@@ -113,7 +126,7 @@ class SchedulerGame
 
         norm = (a.position - b.position).normalized
 
-
+        # Round to 1 decimal place to correct for floating point error
         norm.x.round(1).abs == 1.0 && norm.y.round(1).abs == 0.0 ||
         norm.x.round(1).abs == 0.0 && norm.y.round(1).abs == 1.0
       end

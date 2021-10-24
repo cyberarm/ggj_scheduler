@@ -7,6 +7,7 @@ require_relative "lib/map"
 require_relative "lib/node"
 require_relative "lib/path"
 require_relative "lib/zone"
+require_relative "lib/traveller"
 require_relative "lib/states/main_menu"
 require_relative "lib/states/game"
 

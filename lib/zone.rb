@@ -6,5 +6,8 @@ class SchedulerGame
       @type = type
       @nodes = nodes.freeze
     end
+
+    def update
+    end
   end
 end

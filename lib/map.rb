@@ -28,14 +28,26 @@ class SchedulerGame
       competition_outlet: Gosu::Color::GREEN,
     }
 
+    attr_reader :zones, :travellers, :paths
+
     def initialize(file:)
       @file = File.read(file)
 
       @grid = []
       @zones = []
+      @travellers = []
+
+      @paths = []
 
       parse
       parse_zones
+
+      entry_door = @zones.find { |zone| zone.type == :entry_door }
+      raise "FATAL: no :entry_door on map!" unless entry_door.is_a?(Zone)
+
+      @zones.reject { |z| z.type == :entry_door }.each do |zone|
+        @travellers << Traveller.new(map: self, zone: entry_door, goal: zone)
+      end
 
       @scaler = [window.width / (@width.to_f * TILE_SIZE), window.height / (@height.to_f * TILE_SIZE)].min
     end
@@ -96,11 +108,18 @@ class SchedulerGame
             )
           end
         end
+
+        @travellers.each do |traveller|
+          traveller.draw
+        end
       end
     end
 
     def update
       @scaler = [window.width / (@width.to_f * TILE_SIZE), window.height / (@height.to_f * TILE_SIZE)].min
+
+      @zones.each { |z| z.update }
+      @travellers.each { |t| t.update }
     end
 
     def get(x, y)
