@@ -10,5 +10,7 @@ require_relative "lib/zone"
 require_relative "lib/traveller"
 require_relative "lib/states/main_menu"
 require_relative "lib/states/game"
+require_relative "lib/states/game_won"
+require_relative "lib/states/game_lost"
 
 SchedulerGame::Window.new(width: 1280, height: 720, resizable: true).show

@@ -6,7 +6,7 @@ class SchedulerGame
 
         flow(width: 1.0, height: 1.0) do
           stack(width: 0.3, height: 1.0, padding: 24) do
-            background 0xff_884400
+            background 0xff_222222
 
             banner "SCHEDULER", text_align: :center, width: 1.0
 
@@ -20,11 +20,13 @@ class SchedulerGame
           end
 
           stack(width: 0.7, height: 1.0, padding: 24) do
-            background 0xff_442200
+            background 0xff_111111
 
             title "HOW TO PLAY"
 
-            para "Do the thing and the other thing so that the things go a do the thing without thinging."
+            para "Create paths from the entry door to the various zones before time runs out!"
+            para "Use [LEFT MOUSE] and drag to trace a path from the entry door to the waiting zone."
+            para "Be careful not to block yourself!"
           end
         end
       end

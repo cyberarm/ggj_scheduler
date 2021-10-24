@@ -23,6 +23,10 @@ class SchedulerGame
         @key_history_index = 0
 
         @font = Gosu::Font.new(28)
+        @clock_font = Gosu::Font.new(48)
+
+        @game_time = 0.0
+        @game_clock = 3.5 * 60.0
       end
 
       def draw
@@ -30,12 +34,19 @@ class SchedulerGame
         @map.draw
 
         @map.paths.each(&:draw)
+
+        @clock_font.draw_text(format_clock, @map.width + 32, 32, 0)
       end
 
       def update
         @map.update
 
         add_to_path if @building_path
+
+        check_for_win
+        check_for_lose
+
+        @game_time += window.dt
       end
 
       def button_down(id)
@@ -158,6 +169,30 @@ class SchedulerGame
         return right if right
 
         false
+      end
+
+      def format_clock
+        time = (@game_clock - @game_time).clamp(0.0, @game_clock)
+
+        minutes = (time / 60.0) % 60.0
+        seconds = time % 60.0
+
+        "#{minutes.floor.to_s.rjust(2, '0')}:#{seconds.ceil.to_s.rjust(2, '0')}"
+      end
+
+      def check_for_win
+        if @map.zones.detect { |z| z.type == :entry_door }.occupancy.zero? &&
+           @map.paths.size.zero? &&
+           @game_time <= @game_clock
+
+          push_state(States::GameWon, game_time: @game_time, map: @map)
+        end
+      end
+
+      def check_for_lose
+        if @game_time > @game_clock
+          push_state(States::GameLost, game_time: @game_time, map: @map)
+        end
       end
     end
   end

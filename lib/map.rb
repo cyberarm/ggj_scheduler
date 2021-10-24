@@ -191,5 +191,13 @@ class SchedulerGame
         @paths.delete(path) unless in_use
       end
     end
+
+    def width
+      @width * TILE_SIZE * @scaler
+    end
+
+    def height
+      @height * TILE_SIZE * @scaler
+    end
   end
 end
