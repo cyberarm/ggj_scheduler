@@ -33,7 +33,7 @@ class SchedulerGame
       end
 
       def draw
-        fill(0xf88_444444)
+        fill(0x88_444444)
         @map.draw
 
         @map.paths.each(&:draw)
