@@ -1,10 +1,20 @@
 class SchedulerGame
   class Path
+    PATH_SIZE = Map::TILE_SIZE - 4
+
+    PATH_COLORS = [
+      0xff_1133aa,
+      0xff_349f11,
+      0xff_32ff91,
+      0xff_aa8888
+    ]
+
     attr_reader :map, :valid_types, :nodes
     attr_accessor :externally_valid
 
-    def initialize(map:, valid_types: [:floor])
+    def initialize(map:, color_index:, valid_types: [:floor])
       @map = map
+      @color_index = color_index
       @valid_types = valid_types
 
       @nodes = []
@@ -16,11 +26,11 @@ class SchedulerGame
       Gosu.scale(@map.scaler, @map.scaler) do
         @nodes.each do |node|
           Gosu.draw_rect(
-            node.position.x * Map::TILE_SIZE,
-            node.position.y * Map::TILE_SIZE,
-            Map::TILE_SIZE,
-            Map::TILE_SIZE,
-            valid? ? 0xaa_008000 : 0xaa_800000
+            node.position.x * Map::TILE_SIZE + 2,
+            node.position.y * Map::TILE_SIZE + 2,
+            PATH_SIZE,
+            PATH_SIZE,
+            valid? ? PATH_COLORS[@color_index % PATH_COLORS.size - 1] : 0xaa_800000
           )
         end
       end

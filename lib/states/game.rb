@@ -78,7 +78,7 @@ class SchedulerGame
 
         @building_path = true
 
-        @paths << Path.new(map: @map)
+        @paths << Path.new(map: @map, color_index: @paths.count)
       end
 
       def add_to_path
@@ -86,7 +86,8 @@ class SchedulerGame
 
         @paths.last.nodes << node if node != @paths.last&.nodes&.detect { |n| n == node } &&
                                      node_is_straight?(node, @paths.last&.nodes&.last) &&
-                                     node_is_neighbor?(node, @paths.last&.nodes&.last)
+                                     node_is_neighbor?(node, @paths.last&.nodes&.last) &&
+                                     node.type == :floor
 
         @paths.last.externally_valid = path_valid?(@paths.last)
       end
@@ -124,6 +125,8 @@ class SchedulerGame
       end
 
       def node_neighbor_is_zone?(node)
+        return false unless node
+
         # UP
         up = @map.get_zone(node.position.x, node.position.y - 1)
         return up if up

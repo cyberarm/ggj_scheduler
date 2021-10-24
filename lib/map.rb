@@ -17,9 +17,9 @@ class SchedulerGame
     }
 
     TILE_COLORS = {
-      floor: Gosu::Color::BLACK,
+      floor: 0xff_111111,
       wall: Gosu::Color::GRAY,
-      field: Gosu::Color::GRAY,
+      field: 0xff_aa4400,
       entry_door: Gosu::Color::CYAN,
       pit: Gosu::Color::WHITE,
       audience: Gosu::Color::YELLOW,
