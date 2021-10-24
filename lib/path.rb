@@ -1,12 +1,15 @@
 class SchedulerGame
   class Path
     attr_reader :map, :valid_types, :nodes
+    attr_accessor :externally_valid
 
     def initialize(map:, valid_types: [:floor])
       @map = map
       @valid_types = valid_types
 
       @nodes = []
+
+      @externally_valid = true
     end
 
     def draw
@@ -17,7 +20,7 @@ class SchedulerGame
             node.position.y * Map::TILE_SIZE,
             Map::TILE_SIZE,
             Map::TILE_SIZE,
-            valid? ? 0x88_ffffff : 0x88_800000
+            valid? ? 0xaa_008000 : 0xaa_800000
           )
         end
       end
@@ -38,7 +41,7 @@ class SchedulerGame
     end
 
     def valid?
-      @nodes.select { |node| valid_types.include?(node.type) }.size == @nodes.size
+      @nodes.select { |node| valid_types.include?(node.type) }.size == @nodes.size && @externally_valid
     end
   end
 end

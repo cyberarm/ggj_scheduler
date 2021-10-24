@@ -32,8 +32,10 @@ class SchedulerGame
       @file = File.read(file)
 
       @grid = []
+      @zones = []
 
       parse
+      parse_zones
 
       @scaler = [window.width / (@width.to_f * TILE_SIZE), window.height / (@height.to_f * TILE_SIZE)].min
     end
@@ -57,6 +59,18 @@ class SchedulerGame
 
         @width  = x
         @height = y
+      end
+    end
+
+    def parse_zones
+      clone = nodes.clone
+
+      clone.reject { |n| %i[wall floor].include?(n.type) }.each do |node|
+        _nodes = floodfill_select(node, node.type)
+
+        @zones << Zone.new(type: node.type, nodes: _nodes)
+
+        clone.delete(_nodes)
       end
     end
 
@@ -107,8 +121,34 @@ class SchedulerGame
       get(x.floor.clamp(0..@width - 1), y.floor.clamp(0..@height - 1))
     end
 
+    def nodes
+      @grid
+    end
+
     def scaler
       @scaler
+    end
+
+    def floodfill_select(node, type, list = [])
+      return unless node
+      return if list.include?(node)
+      return if node.type != type
+
+      list << node
+
+      # UP
+      floodfill_select(get(node.position.x, node.position.y - 1), type, list)
+
+      # DOWN
+      floodfill_select(get(node.position.x, node.position.y + 1), type, list)
+
+      # LEFT
+      floodfill_select(get(node.position.x - 1, node.position.y), type, list)
+
+      # RIGHT
+      floodfill_select(get(node.position.x + 1, node.position.y), type, list)
+
+      list
     end
   end
 end

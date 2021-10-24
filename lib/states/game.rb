@@ -80,7 +80,11 @@ class SchedulerGame
       def add_to_path
         node = @map.mouse_over(window.mouse_x, window.mouse_y)
 
-        @paths.last.nodes << node if node != @paths.last&.nodes&.detect { |n| n == node }
+        @paths.last.nodes << node if node != @paths.last&.nodes&.detect { |n| n == node } &&
+                                     node_is_straight?(node, @paths.last&.nodes&.last) &&
+                                     node_is_neighbor?(node, @paths.last&.nodes&.last)
+
+        @paths.last.externally_valid = path_valid?(@paths.last)
       end
 
       def finish_path
@@ -89,6 +93,30 @@ class SchedulerGame
         unless @paths.last&.valid?
           @paths.delete(@paths.last)
         end
+      end
+
+      def path_valid?(path_a)
+        @paths.reject { |o| o == path_a }.each do |path_b|
+          return false if path_a.nodes.any? { |n| path_b.nodes.include?(n) }
+        end
+
+        true
+      end
+
+      def node_is_straight?(a, b)
+        return true if b.nil?
+
+        norm = (a.position - b.position).normalized
+
+
+        norm.x.round(1).abs == 1.0 && norm.y.round(1).abs == 0.0 ||
+        norm.x.round(1).abs == 0.0 && norm.y.round(1).abs == 1.0
+      end
+
+      def node_is_neighbor?(a, b)
+        return true if b.nil?
+
+        a.position.distance(b.position) <= 1.0
       end
     end
   end
