@@ -72,6 +72,10 @@ class SchedulerGame
       end
 
       def construct_path
+        node = @map.mouse_over(window.mouse_x, window.mouse_y)
+
+        return unless node_neighbor_is_zone?(node)
+
         @building_path = true
 
         @paths << Path.new(map: @map)
@@ -90,7 +94,7 @@ class SchedulerGame
       def finish_path
         @building_path = false
 
-        unless @paths.last&.valid?
+        unless @paths.last&.valid? && node_neighbor_is_zone?(@paths.last&.nodes.last)
           @paths.delete(@paths.last)
         end
       end
@@ -117,6 +121,26 @@ class SchedulerGame
         return true if b.nil?
 
         a.position.distance(b.position) <= 1.0
+      end
+
+      def node_neighbor_is_zone?(node)
+        # UP
+        up = @map.get_zone(node.position.x, node.position.y - 1)
+        return up if up
+
+        # DOWN
+        down = @map.get_zone(node.position.x, node.position.y + 1)
+        return down if down
+
+        # LEFT
+        left = @map.get_zone(node.position.x - 1, node.position.y)
+        return left if left
+
+        # RIGHT
+        right = @map.get_zone(node.position.x + 1, node.position.y)
+        return right if right
+
+        false
       end
     end
   end

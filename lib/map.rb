@@ -111,6 +111,10 @@ class SchedulerGame
       @grid[y * @width + x] = value
     end
 
+    def get_zone(x, y)
+      @zones.detect { |z| z.nodes.any? { |n| n.position.x == x && n.position.y == y } }
+    end
+
     def mouse_over(x, y)
       x /= @scaler
       y /= @scaler
