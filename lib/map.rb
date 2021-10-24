@@ -79,9 +79,9 @@ class SchedulerGame
       nodes.reject { |n| %i[wall floor].include?(n.type) }.each do |node|
         next if node_zoned?(node)
 
-        _nodes = floodfill_select(node, node.type)
+        _nodes = floodfill_select(node, node.type).shuffle
 
-        @zones << Zone.new(type: node.type, nodes: _nodes)
+        @zones << Zone.new(map: self, type: node.type, nodes: _nodes)
       end
     end
 
@@ -123,6 +123,8 @@ class SchedulerGame
 
       @zones.each { |z| z.update }
       @travellers.each { |t| t.update }
+
+      purge_paths
     end
 
     def get(x, y)
@@ -175,6 +177,15 @@ class SchedulerGame
       floodfill_select(get(node.position.x + 1, node.position.y), type, list)
 
       list
+    end
+
+    def purge_paths
+      @paths.each do |path|
+        next if path.building?
+
+        in_use = @travellers.detect { |t| t.path == path }
+        @paths.delete(path) unless in_use
+      end
     end
   end
 end

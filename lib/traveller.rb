@@ -3,7 +3,7 @@ class SchedulerGame
     TRAVELLER_SIZE = Path::PATH_SIZE - 4
     TRAVELLER_COLOR = Gosu::Color::BLACK
 
-    attr_reader :map, :zone, :goal, :path
+    attr_reader :map, :zone, :goal, :path, :path_index
 
     def initialize(map:, zone:, goal:)
       @map = map
@@ -20,6 +20,8 @@ class SchedulerGame
     def path=(path)
       @counter = 0
       @path_index = 0
+
+      @pathed = true
 
       @path = path
     end
@@ -51,26 +53,42 @@ class SchedulerGame
     end
 
     def get_node
-      @path ? @path.nodes[@path_index] : @zone.nodes.first
+      @path ? @path.nodes[@path_index] : zone_node_slot
+    end
+
+    def zone_node_slot
+      @pathed ? @zone.nodes.detect { |n| n.data[:traveller] == self } : @zone.nodes.first
     end
 
     def move_along_path(dt)
       @counter += dt
 
-      if @path_index == @path.nodes.size - 1
-        @zone = path_zone_for(@path.nodes.last)
-        @map.paths.delete(@path)
+      data = @path.nodes[@path_index].data
 
-        @goal = nil
-        @path = nil
-
-        return
-      end
+      return unless data[:traveller].nil? || data[:traveller] == self
 
       if @counter >= @node_visit_time
         @counter = 0
+
+        if @path_index == @path.nodes.size - 1
+          @zone = path_zone_for(@path.nodes.last)
+          data[:traveller] = nil
+
+          free_node = @zone.nodes.detect { |n| n.data[:traveller].nil? }
+          free_node.data[:traveller] = self
+
+          @goal = nil
+          @path = nil
+
+          return
+        end
+
+        data[:traveller] = nil
+
         @path_index += 1
         @path_index = @path.nodes.size - 1 if @path_index >= @path.nodes.size - 1
+
+        @path.nodes[@path_index].data[:traveller] = self
       end
     end
 

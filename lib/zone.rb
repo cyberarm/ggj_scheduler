@@ -1,10 +1,18 @@
 class SchedulerGame
   class Zone
-    attr_reader :type, :nodes
+    include CyberarmEngine::Common
 
-    def initialize(type:, nodes:)
+    attr_reader :map, :type, :nodes
+
+    def initialize(map:, type:, nodes:)
+      @map = map
       @type = type
       @nodes = nodes.freeze
+
+      @mode = :receiving
+
+      @receiving_image = window.get_image("#{GAME_ROOT_PATH}/media/receiving.png")
+      @sending_image = window.get_image("#{GAME_ROOT_PATH}/media/sending.png")
     end
 
     def update
@@ -17,12 +25,18 @@ class SchedulerGame
       when :field
         9
       when :team_queue
-        8
+        4
       when :audience
         140
+      when :entry_door
+        Float::INFINITY
       else
         raise NotImplementedError
       end
+    end
+
+    def occupancy
+      @map.travellers.select { |t| t.zone == self }.count
     end
   end
 end

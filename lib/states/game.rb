@@ -99,6 +99,7 @@ class SchedulerGame
 
           @map.paths.delete(@map.paths.last)
         else
+          @map.paths.last.building = false
           assign_path(@map.paths.last)
         end
       end
@@ -115,10 +116,13 @@ class SchedulerGame
         zone = node_neighbor_is_zone?(path.nodes.first)
         goal = node_neighbor_is_zone?(path.nodes.last)
 
-        traveller = @map.travellers.find { |t| t.path.nil? && t.zone == zone && t.goal == goal }
+        travellers = @map.travellers.select { |t| t.path.nil? && t.zone == zone && t.goal == goal }
 
-        traveller.path = path if traveller
-        @map.paths.delete(path) unless traveller
+        if travellers.size.positive?
+          travellers.each { |t| t.path = path }
+        else
+          @map.paths.delete(path)
+        end
       end
 
       def node_is_straight?(a, b)

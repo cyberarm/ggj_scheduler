@@ -10,7 +10,7 @@ class SchedulerGame
     ]
 
     attr_reader :map, :valid_types, :nodes
-    attr_accessor :externally_valid
+    attr_accessor :externally_valid, :building
 
     def initialize(map:, color_index:, valid_types: [:floor])
       @map = map
@@ -20,6 +20,7 @@ class SchedulerGame
       @nodes = []
 
       @externally_valid = true
+      @building = true
     end
 
     def draw
@@ -52,6 +53,10 @@ class SchedulerGame
 
     def valid?
       @nodes.select { |node| valid_types.include?(node.type) }.size == @nodes.size && @externally_valid
+    end
+
+    def building?
+      @building
     end
   end
 end
