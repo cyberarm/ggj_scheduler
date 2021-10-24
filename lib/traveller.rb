@@ -65,8 +65,6 @@ class SchedulerGame
 
       data = @path.nodes[@path_index].data
 
-      return unless data[:traveller].nil? || data[:traveller] == self
-
       if @counter >= @node_visit_time
         @counter = 0
 
@@ -88,7 +86,13 @@ class SchedulerGame
         @path_index += 1
         @path_index = @path.nodes.size - 1 if @path_index >= @path.nodes.size - 1
 
-        @path.nodes[@path_index].data[:traveller] = self
+        next_data = @path.nodes[@path_index].data
+
+        if next_data[:traveller].nil?
+          next_data[:traveller] = self
+        else
+          @path_index -= 1
+        end
       end
     end
 
