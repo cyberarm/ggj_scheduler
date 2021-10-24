@@ -14,7 +14,7 @@ class SchedulerGame
       @path_index = 0
 
       @counter = 0.0
-      @node_visit_time = 500
+      @node_visit_time = 200
     end
 
     def path=(path)
@@ -40,7 +40,9 @@ class SchedulerGame
         node.position.x * Map::TILE_SIZE + TRAVELLER_SIZE,
         node.position.y * Map::TILE_SIZE + TRAVELLER_SIZE,
         TRAVELLER_SIZE * 0.25,
-        5
+        5,
+        Gosu::Color::WHITE,
+        200
       )
     end
 

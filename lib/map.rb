@@ -43,10 +43,11 @@ class SchedulerGame
       parse_zones
 
       entry_door = @zones.find { |zone| zone.type == :entry_door }
-      raise "FATAL: no :entry_door on map!" unless entry_door.is_a?(Zone)
 
       @zones.reject { |z| z.type == :entry_door }.each do |zone|
-        @travellers << Traveller.new(map: self, zone: entry_door, goal: zone)
+        zone.capacity.times do
+          @travellers << Traveller.new(map: self, zone: entry_door, goal: zone)
+        end
       end
 
       @scaler = [window.width / (@width.to_f * TILE_SIZE), window.height / (@height.to_f * TILE_SIZE)].min
@@ -75,15 +76,17 @@ class SchedulerGame
     end
 
     def parse_zones
-      clone = nodes.clone
+      nodes.reject { |n| %i[wall floor].include?(n.type) }.each do |node|
+        next if node_zoned?(node)
 
-      clone.reject { |n| %i[wall floor].include?(n.type) }.each do |node|
         _nodes = floodfill_select(node, node.type)
 
         @zones << Zone.new(type: node.type, nodes: _nodes)
-
-        clone.delete(_nodes)
       end
+    end
+
+    def node_zoned?(node)
+      @zones.detect { |z| z.nodes.include?(node) }
     end
 
     def parse_char(char)
