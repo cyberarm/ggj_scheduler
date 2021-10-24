@@ -7,6 +7,8 @@ class SchedulerGame
         @game_time = @options[:game_time]
         @map = @options[:map]
 
+        Gosu::Song.current_song&.stop
+
         background 0xff_222222
 
         flow(width: 1.0, height: 1.0) do

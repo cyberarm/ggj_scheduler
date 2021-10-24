@@ -39,6 +39,8 @@ class SchedulerGame
 
       @paths = []
 
+      @path_navigated = get_sample("#{GAME_ROOT_PATH}/media/sfx/oga_farfadet46_pop.ogg")
+
       parse
       parse_zones
 
@@ -189,6 +191,7 @@ class SchedulerGame
 
         in_use = @travellers.detect { |t| t.path == path }
         @paths.delete(path) unless in_use
+        @path_navigated.play(4.0) unless in_use
       end
     end
 

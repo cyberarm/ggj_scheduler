@@ -26,7 +26,10 @@ class SchedulerGame
         @clock_font = Gosu::Font.new(48)
 
         @game_time = 0.0
-        @game_clock = 3.5 * 60.0
+        @game_clock = 3.0 * 60.0
+
+        s = get_song("#{GAME_ROOT_PATH}/media/music/oga_cynicmusic_awake10_megaWall.mp3")
+        s.play(true)
       end
 
       def draw
@@ -182,7 +185,7 @@ class SchedulerGame
         minutes = (time / 60.0) % 60.0
         seconds = time % 60.0
 
-        "#{minutes.floor.to_s.rjust(2, '0')}:#{seconds.ceil.to_s.rjust(2, '0')}"
+        "#{minutes.floor.to_s.rjust(2, '0')}:#{seconds.floor.to_s.rjust(2, '0')}"
       end
 
       def check_for_win
