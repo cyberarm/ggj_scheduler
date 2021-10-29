@@ -17,7 +17,7 @@ class SchedulerGame
     }
 
     TILE_COLORS = {
-      floor: 0xff_111111,
+      floor: 0xdd_111111,
       wall: Gosu::Color::GRAY,
       field: 0xff_aa4400,
       entry_door: Gosu::Color::CYAN,
@@ -102,14 +102,30 @@ class SchedulerGame
     def draw
       Gosu.scale(@scaler, @scaler) do
         @height.times do |y|
+          Gosu.draw_rect(
+            0,
+            y * TILE_SIZE,
+            @width * TILE_SIZE,
+            1,
+            Gosu::Color::BLACK
+          )
+
           @width.times do |x|
+          Gosu.draw_rect(
+            x * TILE_SIZE,
+            0,
+            1,
+            @height * TILE_SIZE,
+            Gosu::Color::BLACK
+          )
+
             Gosu.draw_rect(
               x * TILE_SIZE,
               y * TILE_SIZE,
               TILE_SIZE,
               TILE_SIZE,
               get(x, y).color,
-              0
+              1
             )
           end
         end

@@ -39,7 +39,8 @@ class SchedulerGame
             node.position.y * Map::TILE_SIZE + 2,
             PATH_SIZE,
             PATH_SIZE,
-            valid? ? PATH_COLORS[@color_index % PATH_COLORS.size - 1] : 0xaa_800000
+            valid? ? PATH_COLORS[@color_index % PATH_COLORS.size - 1] : 0xaa_800000,
+            2
           )
         end
       end
