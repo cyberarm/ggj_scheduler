@@ -58,7 +58,9 @@ class SchedulerGame
     end
 
     def oscillator
-      Math.sin((Gosu.milliseconds + @random_offset) / @freqency) * Map::TILE_SIZE * 0.25
+      @game_state ||= $window.instance_variable_get(:"@states").find { |s| s.is_a?(States::Game) }
+
+      Math.sin(((@game_state.game_time * 1000.0) + @random_offset) / @freqency) * Map::TILE_SIZE * 0.25
     end
 
     def capacity

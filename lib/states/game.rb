@@ -14,6 +14,8 @@ class SchedulerGame
         Gosu::KB_A,
       ]
 
+      attr_reader :game_time
+
       def setup
         window.show_cursor = true
 
@@ -27,6 +29,8 @@ class SchedulerGame
 
         @game_time = 0.0
         @game_clock = 3.0 * 60.0
+
+        @game_started = false
 
         s = get_song("#{GAME_ROOT_PATH}/media/music/oga_cynicmusic_awake10_megaWall.mp3")
         s.play(true)
@@ -50,16 +54,20 @@ class SchedulerGame
         check_for_win
         check_for_lose
 
-        @game_time += window.dt
+        @game_time += window.dt if @game_started
       end
 
       def button_down(id)
         super
 
+        @game_started = true
+
         # TODO: Track mouse move while button down to create path to NEED #
         construct_path if id == Gosu::MS_LEFT
 
         @key_history[@key_history_index] = id
+
+        push_state(States::Pause) if id == Gosu::KB_ESCAPE
 
         if @key_history == KONAMI_CODE
           window.close
